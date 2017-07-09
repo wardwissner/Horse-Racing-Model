@@ -13,7 +13,8 @@ def sort_lists(lists):
   return win_place_show
   
 
-df = pd.read_excel("Belmont-6-18-17.xlsx")
+df = pd.read_excel("Belmont-7-08-17.xlsx")
+print(df)
 stat_list=["Finish1","Finish2","Finish3","TRAINER%","JOCKEY%","BESTYR","TRAINER1","TRAINER2"]
 df["TRAINER%"] = df["TRAINERWINS"] / df["TRAINERSTARTS"]
 df["JOCKEY%"] = df["JOCKEYWINS"] / df["JOCKEYSTARTS"]
@@ -32,11 +33,11 @@ for stat in stat_list:
        num_horses.append(len(rank_list))
     df[stat+"RANK"]=rank_list
     print(num_horses)
-root_mse=1.921
-num_trials=100
+root_mse=1.864
+num_trials=2
 payoff_matrix={}
 exacta_list=[]
-RACES=['RACE1','RACE2','RACE3','RACE4','RACE5','RACE6','RACE7','RACE8','RACE9','RACE10']
+RACES=['RACE1','RACE2','RACE3','RACE4','RACE5','RACE6','RACE7','RACE8','RACE9','RACE10','RACE11']
 for i in range(0,20):
   exacta_list.append("Exacta"+ str(i+1))
 column_list= ["TRACK","DATE","RACE","Post","PGM#","NAME", "Finish1" , "Finish2",
@@ -56,7 +57,7 @@ column_list= ["TRACK","DATE","RACE","Post","PGM#","NAME", "Finish1" , "Finish2",
               "PROBABILITY"
               ]
 columns_race=[]
-for races in range(0,10):
+for races in range(0,num_races):
     k=num_horses[races+1]-num_horses[races]
     win=np.zeros((k))# import modules
 
@@ -68,9 +69,9 @@ for races in range(0,10):
       s = np.random.normal(0,root_mse,len(df["Race"]))
       df["norm"]=list(s) 
       print (df["norm"])
-      df["constant"] = len(df["Race"])*[1.227]
+      df["constant"] = len(df["Race"])*[2.28]
       print(df["constant"])
-      df["finish"]= df["constant"] +.343*df["BESTYRRANK"] + .437*df["TRAINER2RANK"] + df["norm"]
+      df["finish"]= df["constant"] +.322*df["BESTYRRANK"] + .225*df["JOCKEY%RANK"] + df["norm"]
       df["PROBABILITY"]=len(df["Race"])*[0.]
       print (df["finish"],df["BESTYRRANK"],df["TRAINER2RANK"] )
       print(df["PROBABILITY"])
@@ -126,7 +127,7 @@ for races in range(0,10):
     if races==0:
        df1 = pd.DataFrame(matrix, columns=columns_race)
        print(df1)
-       writer = pd.ExcelWriter("Belmont_Summary6-18-17.xlsx")
+       writer = pd.ExcelWriter("Belmont_Summary7-08-17-NEW.xlsx")
        df1.to_excel(writer, sheet_name=RACES[races])
        del columns_race [: ] 
     elif races==1:
@@ -177,7 +178,12 @@ for races in range(0,10):
        del columns_race [: ]
     elif races==10: 
        df11 = pd.DataFrame(matrix, columns=columns_race)
-       print(df10)
+       print(df11)
        df11.to_excel(writer, sheet_name=RACES[races])
+       del columns_race [: ]
+    elif races==11: 
+       df12 = pd.DataFrame(matrix, columns=columns_race)
+       print(df12)
+       df12.to_excel(writer, sheet_name=RACES[races])
        del columns_race [: ]
 writer.save()
